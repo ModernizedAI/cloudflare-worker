@@ -8,23 +8,23 @@ export interface Env {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
-    
+
     if (request.method === 'OPTIONS') {
       return handleCORS();
     }
 
     if (url.pathname === '/health') {
       return new Response(JSON.stringify({ status: 'healthy' }), {
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
     }
 
     const authHeader = request.headers.get('Authorization');
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return new Response(JSON.stringify({ error: 'Missing or invalid authorization' }), {
         status: 401,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
     }
 
@@ -43,7 +43,7 @@ export default {
       headers.delete('Authorization');
 
       const backendUrl = env.BACKEND_URL + url.pathname + url.search;
-      
+
       const backendRequest = new Request(backendUrl, {
         method: request.method,
         headers: headers,
@@ -51,7 +51,7 @@ export default {
       });
 
       const response = await fetch(backendRequest);
-      
+
       const responseHeaders = new Headers(response.headers);
       responseHeaders.set('Access-Control-Allow-Origin', '*');
       responseHeaders.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -62,11 +62,10 @@ export default {
         statusText: response.statusText,
         headers: responseHeaders,
       });
-
     } catch (error) {
       return new Response(JSON.stringify({ error: 'Invalid token' }), {
         status: 401,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
     }
   },
