@@ -1,0 +1,6 @@
+name = "crossbrain-auth-gateway"
+main = "src/index.ts"
+compatibility_date = "2023-12-18"
+
+[env.production]
+route = "api.crossbrain.com/*"
